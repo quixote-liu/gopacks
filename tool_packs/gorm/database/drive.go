@@ -16,12 +16,14 @@ const (
 )
 
 var defaultMysqlDriver = &mysqlDriver{
-	port:       MysqlPort,
-	host:       MysqlHost,
-	userName:   MysqlUserName,
-	password:   MysqlPassword,
-	dbName:     MysqlDBName,
-	gormConfig: gorm.Config{},
+	port:     MysqlPort,
+	host:     MysqlHost,
+	userName: MysqlUserName,
+	password: MysqlPassword,
+	dbName:   MysqlDBName,
+	gormConfig: gorm.Config{
+		CreateBatchSize: 1000,
+	},
 }
 
 type mysqlDriver struct {
@@ -40,7 +42,7 @@ func (drv *mysqlDriver) dsn() string {
 	return u
 }
 
-func (drv *mysqlDriver) connetDBByGorm() (*gorm.DB, error) {
+func (drv *mysqlDriver) connetDB() (*gorm.DB, error) {
 	dsn := drv.dsn()
 	return gorm.Open(mysql.Open(dsn), &drv.gormConfig)
 }
