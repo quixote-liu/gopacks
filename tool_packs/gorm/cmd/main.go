@@ -22,23 +22,58 @@ func main() {
 		return
 	}
 
-	err := UserCase(database.DB)
+	err := UserDemo(database.DB)
 	if err != nil {
 		log.Printf("user case error: %v", err)
 		return
 	}
 }
 
-func UserCase(db *gorm.DB) error {
-	userCaseA := model.User{
-		Name:  "lcs_1",
-		Email: "lcs_1@foxmail.com",
+var (
+	userCaseA = model.User{
+		Name:  "lcs_2",
+		Email: "lcs@foxmail.com",
 		Age:   18,
 	}
-
-	if err := model.CreateUser(db, userCaseA); err != nil {
-		return fmt.Errorf("create user failed: %v", err)
+	userCaseB = model.User{
+		Name:  "lcs_3",
+		Email: "lcs@email.com",
+		Age:   18,
 	}
+)
+
+func UserDemo(db *gorm.DB) error {
+	// *********************************************
+	// *************** Create user *****************
+	// *********************************************
+
+	// create user
+	// if err := model.CreateUser(db, userCaseA); err != nil {
+	// 	return fmt.Errorf("create user failed: %v", err)
+	// }
+
+	// create users
+	// if err := model.CreateUsers(db, []model.User{userCaseA, userCaseB}); err != nil {
+	// 	return fmt.Errorf("create users failed: %v ", err)
+	// }
+
+	// *********************************************
+	// *************** Find user *******************
+	// *********************************************
+
+	// first user.
+	firstUser, err := model.FirstUser(db)
+	if err != nil {
+		return fmt.Errorf("find first user from the mysql database failed: %v", err)
+	}
+	fmt.Println("first user: ", *firstUser)
+
+	// last user.
+	lastUser, err := model.LastUser(db)
+	if err != nil {
+		return fmt.Errorf("find last user from the mysql database failed: %v", err)
+	}
+	fmt.Println("last user: ", *lastUser)
 
 	return nil
 }

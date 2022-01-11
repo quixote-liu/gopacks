@@ -2,21 +2,11 @@ package model
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-
-	"gopacks/tool_packs/gorm/database"
 )
-
-func init() {
-	err := database.DB.AutoMigrate(&User{})
-	if err != nil {
-		log.Printf("migrate user model by gorm db failed: %v", err)
-	}
-}
 
 type User struct {
 	ID        string
@@ -28,6 +18,7 @@ type User struct {
 	UpdatedAt time.Time
 }
 
+// Hooks.
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 	u.ID = uuid.NewString()
 	fmt.Println("before create user")
@@ -40,10 +31,30 @@ func (u *User) AfterCreate(tx *gorm.DB) (err error) {
 	return err
 }
 
+// Create user.
 func CreateUser(db *gorm.DB, user User) error {
 	return db.Create(&user).Error
 }
 
 func CreateUsers(db *gorm.DB, users []User) error {
 	return db.Create(&users).Error
+}
+
+// Find user.
+func FirstUser(db *gorm.DB) (*User, error) {
+	u := &User{}
+	err := db.First(u).Error
+	return u, err
+}
+
+func TakeUser(db *gorm.DB) (*User, error) {
+	u := &User{}
+	err := db.Take(u).Error
+	return u, err
+}
+
+func LastUser(db *gorm.DB) (*User, error) {
+	u := &User{}
+	err := db.Last(u).Error
+	return u, err
 }
