@@ -48,9 +48,9 @@ func UserDemo(db *gorm.DB) error {
 	// *********************************************
 
 	// create user
-	// if err := model.CreateUser(db, userCaseA); err != nil {
-	// 	return fmt.Errorf("create user failed: %v", err)
-	// }
+	if err := model.CreateUser(db, userCaseA); err != nil {
+		return fmt.Errorf("create user failed: %v", err)
+	}
 
 	// create users
 	// if err := model.CreateUsers(db, []model.User{userCaseA, userCaseB}); err != nil {
@@ -74,6 +74,49 @@ func UserDemo(db *gorm.DB) error {
 		return fmt.Errorf("find last user from the mysql database failed: %v", err)
 	}
 	fmt.Println("last user: ", *lastUser)
+
+	// find user by name.
+	user, err := model.FindUserByName(db, "lcs_2")
+	if err != nil {
+		return fmt.Errorf("find user by name %s failed: %v", "lcs_2", err)
+	}
+	fmt.Printf("find user by name lcs_2: %v \n", *user)
+
+	// find user by id
+	user2, err := model.FindUserById(db, user.ID)
+	if err != nil {
+		return fmt.Errorf("find user by id %s failed: %v", user.ID, user)
+	}
+	fmt.Printf("find user by id %s: %v\n", user.ID, *user2)
+
+	// *********************************************
+	// *************** Update user *****************
+	// *********************************************
+	user.Name = "new_" + user.Name
+	if err := model.UpdateUser(db, *user); err != nil {
+		return fmt.Errorf("update user failed: %v", err)
+	}
+
+	// find user by id
+	user3, err := model.FindUserById(db, user.ID)
+	if err != nil {
+		return fmt.Errorf("find user by id %s failed: %v", user.ID, user)
+	}
+	fmt.Printf("find user by id %s: %v \n", user.ID, *user3)
+
+	// *********************************************
+	// *************** Delete user *****************
+	// *********************************************
+	// delete user by id.
+	if err := model.DeleteUser(db, *user3); err != nil {
+		return fmt.Errorf("delete user by id %s failed: %v", user3.ID, err)
+	}
+
+	if _, err := model.FindUserById(db, user.ID); err == gorm.ErrRecordNotFound {
+		fmt.Printf("the user which id is %s not found", user.ID)
+	} else if err != nil {
+		panic(err)
+	}
 
 	return nil
 }
