@@ -12,17 +12,19 @@ func main() {
 
 	group := r.Group("/go/proxy")
 
-	group.GET("/flavors/:flavor_id/os-flavor-access", func(c *gin.Context) {
+	group.GET("/compute/v2.1/flavors/:flavor_id/os-flavor-access", func(c *gin.Context) {
 		flavorID := c.Param("flavor_id")
 		c.JSON(http.StatusOK, gin.H{
+			"method":    c.Request.Method,
 			"hello":     "flavor",
 			"flavor_id": flavorID,
 		})
 	})
 
-	group.GET("/flavors/:flavor_id", func(c *gin.Context) {
+	group.GET("/compute/v2.1/flavors/:flavor_id", func(c *gin.Context) {
 		flavorID := c.Param("flavor_id")
 		c.JSON(http.StatusOK, gin.H{
+			"method":    c.Request.Method,
 			"hello":     "flavor",
 			"flavor_id": flavorID,
 		})
@@ -32,7 +34,7 @@ func main() {
 		service := c.Param("service")
 		osAPI := c.Param("os_api")
 		c.JSON(http.StatusOK, gin.H{
-			"hello":   "any",
+			"method":  "any",
 			"service": service,
 			"os_api":  osAPI,
 		})
