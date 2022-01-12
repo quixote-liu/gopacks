@@ -58,3 +58,25 @@ func LastUser(db *gorm.DB) (*User, error) {
 	err := db.Last(u).Error
 	return u, err
 }
+
+func FindUserById(db *gorm.DB, id string) (*User, error) {
+	u := &User{}
+	err := db.Where("id = ?", id).First(u).Error
+	return u, err
+}
+
+func FindUserByName(db *gorm.DB, name string) (*User, error) {
+	u := &User{}
+	err := db.Where("name = ?", name).First(u).Error
+	return u, err
+}
+
+// Update user.
+func UpdateUser(db *gorm.DB, user User) error {
+	return db.Save(&user).Error
+}
+
+// Delete user.
+func DeleteUser(db *gorm.DB, user User) error {
+	return db.Delete(&user).Error
+}
