@@ -21,9 +21,10 @@ func main() {
 		})
 	})
 
-	r.GET("/:hello/*world", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"hello": "world",
-		})
-	})
+	// r.GET("/:hello/*world", func(c *gin.Context) {
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"hello": "world",
+	// 	})
+	// })
+	r.Run(":8080")
 }
