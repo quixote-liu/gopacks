@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"gopacks/tool_packs/gorm/database"
@@ -22,11 +23,13 @@ func main() {
 		return
 	}
 
-	err := UserDemo(database.DB)
-	if err != nil {
-		log.Printf("user case error: %v", err)
-		return
-	}
+	// err := UserDemo(database.DB)
+	// if err != nil {
+	// 	log.Printf("user case error: %v", err)
+	// 	return
+	// }
+
+	GenSQL(database.DB)
 }
 
 var (
@@ -119,4 +122,19 @@ func UserDemo(db *gorm.DB) error {
 	}
 
 	return nil
+}
+
+func GenSQL(db *gorm.DB) {
+	// Create SQL.
+	res := model.Result{
+		ID:   uuid.NewString(),
+		Name: "wuhan",
+		Age:  18,
+	}
+	createdSQL := model.CreateResultSQL(db, res)
+	fmt.Println("createdSQL: ", createdSQL)
+
+	// Find SQL.
+	findSQL := model.FindResultSQL(db, res.ID)
+	fmt.Println("findSQL: ", findSQL)
 }
