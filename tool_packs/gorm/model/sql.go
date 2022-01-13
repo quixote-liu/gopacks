@@ -14,3 +14,10 @@ func CreateResultSQL(db *gorm.DB, res Result) string {
 	})
 	return sql
 }
+
+func FindResultSQL(db *gorm.DB, id string) string {
+	sql := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		return tx.Model(&Result{}).Where("id = ?", id).Find(&Result{})
+	})
+	return sql
+}
