@@ -5,8 +5,8 @@ import "gorm.io/gorm"
 type Member struct {
 	ID        string
 	Name      string
-	CompanyID string
-	Conpany   Company
+	CompanyID string `gorm:"size:64"`
+	Company   Company
 }
 
 type Company struct {
@@ -14,6 +14,6 @@ type Company struct {
 	Name string
 }
 
-func CreatePerson(db *gorm.DB, m Member) error {
+func CreateMember(db *gorm.DB, m Member) error {
 	return db.Create(&m).Error
 }
