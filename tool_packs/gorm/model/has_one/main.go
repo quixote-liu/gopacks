@@ -53,14 +53,14 @@ func main() {
 	// *************************************
 	// ************** Find *****************
 	// *************************************
-	studentA, err := FindStudentUsingGormPreload(db, studentCase.ID)
+	studentA, err := FindStudentUsingGormPreload(db, studentCaseB.ID)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 	fmt.Printf("find student using gorm preload: %v\n", studentA)
 
-	studentB, err := FindStudentUsingGormJoins(db, studentCase.ID)
+	studentB, err := FindStudentUsingGormJoins(db, studentCaseB.ID)
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -77,18 +77,18 @@ func main() {
 	// *************************************
 	// ************** Update ***************
 	// *************************************
-	studentCaseB.Name = "xiao_ming_5"
-	studentCaseB.StudentCard.Number = "20202006"
-	if err := UpdateStudent(db, studentCaseB); err != nil {
-		log.Fatal(err)
-		return
-	}
+	// studentCaseB.Name = "xiao_ming_13"
+	// studentCaseB.StudentCard.Number = "20202013"
+	// if err := UpdateStudent(db, studentCaseB); err != nil {
+	// 	log.Fatal(err)
+	// 	return
+	// }
 }
 
 type Student struct {
 	ID          string
 	Name        string
-	StudentCard StudentCard `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	StudentCard StudentCard
 }
 
 type StudentCard struct {
@@ -122,5 +122,5 @@ func FindStudentUsingGormJoins(db *gorm.DB, id string) (*Student, error) {
 
 // Update.
 func UpdateStudent(db *gorm.DB, s Student) error {
-	return db.Joins("StudentCard").Save(&s).Error
+	return db.Preload("StudentCard").Updates(&s).Error
 }
