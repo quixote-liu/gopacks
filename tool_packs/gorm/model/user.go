@@ -71,6 +71,12 @@ func FindUserByName(db *gorm.DB, name string) (*User, error) {
 	return u, err
 }
 
+func FindUsers(db *gorm.DB) ([]User, error) {
+	uu := []User{}
+	err := db.Find(&uu).Error
+	return uu, err
+}
+
 // Update user.
 func UpdateUser(db *gorm.DB, user User) error {
 	return db.Save(&user).Error
