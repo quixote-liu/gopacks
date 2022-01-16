@@ -22,17 +22,20 @@ var defaultMysqlDriver = &mysqlDriver{
 	password: MysqlPassword,
 	dbName:   MysqlDBName,
 	gormConfig: gorm.Config{
-		CreateBatchSize: 1000,
+		CreateBatchSize:      1000,
+		FullSaveAssociations: true,
 	},
 }
 
 type mysqlDriver struct {
+	// mysql options
 	port     string
 	host     string
 	userName string
 	password string
 	dbName   string
 
+	// gorm config
 	gormConfig gorm.Config
 }
 
@@ -42,7 +45,7 @@ func (drv *mysqlDriver) dsn() string {
 	return u
 }
 
-func (drv *mysqlDriver) connetDB() (*gorm.DB, error) {
+func (drv *mysqlDriver) connet() (*gorm.DB, error) {
 	dsn := drv.dsn()
 	return gorm.Open(mysql.Open(dsn), &drv.gormConfig)
 }
