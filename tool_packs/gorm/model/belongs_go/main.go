@@ -95,6 +95,7 @@ func FindMemberUsingGormPreLoad(db *gorm.DB, id string) (*Member, error) {
 
 func FindMemberUsingGormJoins(db *gorm.DB, id string) (*Member, error) {
 	m := &Member{}
-	err := db.Joins("Company").First(m, "users.id = ?", id).Error
+	err := db.Joins("Company").Where("members.id = ?", id).Find(m).Error
+	// err := db.Joins("Company").First(m, "members.id = ?", id).Error
 	return m, err
 }
