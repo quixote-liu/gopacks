@@ -22,7 +22,9 @@ func main() {
 		return
 	}
 
+	// *************************************
 	// ************ Create *****************
+	// *************************************
 	// programmerMember := model.Member{
 	// 	ID:   uuid.NewString(),
 	// 	Name: "programmer",
@@ -37,22 +39,30 @@ func main() {
 	// 	return
 	// }
 
-	// ************ Create *****************
+	// *************************************
+	// ************** Find *****************
+	// *************************************
 	id := "3849efc4-b6a9-4a1f-ad2e-88259619084a"
-	memberA, err := FindMemberUsingPreLoad(db, id)
+	memberA, err := FindMemberUsingGormPreLoad(db, id)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-	fmt.Println("memberA:", memberA)
+	fmt.Println("find member using preload:", memberA)
 
-	// Find member.
 	memberB, err := FindMemberByID(db, id)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 	fmt.Println("memberB: ", memberB)
+
+	memberC, err := FindMemberUsingGormJoins(db, id)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	fmt.Println("find member using Joins: ", memberC)
 }
 
 type Member struct {
@@ -77,10 +87,14 @@ func FindMemberByID(db *gorm.DB, id string) (*Member, error) {
 	return m, err
 }
 
-func FindMemberUsingPreLoad(db *gorm.DB, id string) (*Member, error) {
+func FindMemberUsingGormPreLoad(db *gorm.DB, id string) (*Member, error) {
 	m := &Member{}
 	err := db.Preload("Company").Where("id = ?", id).Find(m).Error
 	return m, err
 }
 
-func FindMemberUsingJoins()
+func FindMemberUsingGormJoins(db *gorm.DB, id string) (*Member, error) {
+	m := &Member{}
+	err := db.Joins("Company").First(m, "users.id = ?", id).Error
+	return m, err
+}
