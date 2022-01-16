@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 func main() {
@@ -60,13 +61,6 @@ func main() {
 	}
 	fmt.Printf("find student using gorm preload: %v\n", studentA)
 
-	studentB, err := FindStudentUsingGormJoins(db, studentCaseB.ID)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	fmt.Printf("find student using gorm joins: %v\n", studentB)
-
 	studentC, err := FindStudentByID(db, studentCase.ID)
 	if err != nil {
 		log.Fatal(err)
@@ -77,12 +71,20 @@ func main() {
 	// *************************************
 	// ************** Update ***************
 	// *************************************
-	// studentCaseB.Name = "xiao_ming_13"
-	// studentCaseB.StudentCard.Number = "20202013"
+	// studentCaseB.Name = "xiao_ming_4"
+	// studentCaseB.StudentCard.Number = "20202003"
 	// if err := UpdateStudent(db, studentCaseB); err != nil {
 	// 	log.Fatal(err)
 	// 	return
 	// }
+
+	// *************************************
+	// ************** Delete ***************
+	// *************************************
+	if err := DeleteStudent(db, studentCaseB); err != nil {
+		log.Fatal(err)
+		return
+	}
 }
 
 type Student struct {
@@ -114,13 +116,16 @@ func FindStudentUsingGormPreload(db *gorm.DB, id string) (*Student, error) {
 	return s, err
 }
 
-func FindStudentUsingGormJoins(db *gorm.DB, id string) (*Student, error) {
-	s := &Student{}
-	err := db.Joins("StudentCard").Where("students.id = ?", id).Find(s).Error
-	return s, err
-}
-
 // Update.
 func UpdateStudent(db *gorm.DB, s Student) error {
-	return db.Preload("StudentCard").Updates(&s).Error
+	return db.Save(&s).Error
+}
+
+// Delete.
+func DeleteStudent(db *gorm.DB, s Student) error {
+	return db.Select(clause.Associations).Delete(&s).Error
+}
+
+func DeleteStudentByID(db *gorm.DB, studentID string) error {
+	return db.Delete(&StudentCard{}, "student_id = ?", studentID).Error
 }

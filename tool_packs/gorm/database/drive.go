@@ -23,7 +23,7 @@ var defaultMysqlDriver = &mysqlDriver{
 	dbName:   MysqlDBName,
 	gormConfig: gorm.Config{
 		CreateBatchSize:      1000,
-		FullSaveAssociations: true,
+		// FullSaveAssociations: true,
 	},
 }
 
