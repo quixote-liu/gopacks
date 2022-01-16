@@ -56,13 +56,6 @@ func main() {
 		return
 	}
 	fmt.Println("memberB: ", memberB)
-
-	memberC, err := FindMemberUsingGormJoins(db, id)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	fmt.Println("find member using Joins: ", memberC)
 }
 
 type Member struct {
@@ -90,12 +83,5 @@ func FindMemberByID(db *gorm.DB, id string) (*Member, error) {
 func FindMemberUsingGormPreLoad(db *gorm.DB, id string) (*Member, error) {
 	m := &Member{}
 	err := db.Preload("Company").Where("id = ?", id).Find(m).Error
-	return m, err
-}
-
-func FindMemberUsingGormJoins(db *gorm.DB, id string) (*Member, error) {
-	m := &Member{}
-	err := db.Joins("Company").Where("members.id = ?", id).Find(m).Error
-	// err := db.Joins("Company").First(m, "members.id = ?", id).Error
 	return m, err
 }
