@@ -6,9 +6,6 @@ var DB *gorm.DB
 
 func InitDB() error {
 	var err error
-	DB, err = defaultMysqlDriver.connetDB()
-	if err != nil {
-		return err
-	}
-	return nil
+	DB, err = defaultMysqlDriver.connet()
+	return err
 }
