@@ -23,15 +23,13 @@ func main() {
 		return
 	}
 
-	// err := UserDemo(database.DB)
-	// if err != nil {
-	// 	log.Printf("user case error: %v", err)
-	// 	return
-	// }
+	err := UserDemo(database.DB)
+	if err != nil {
+		log.Printf("user case error: %v", err)
+		return
+	}
 
 	GenSQL(database.DB)
-
-	BelongsToDemo(database.DB)
 }
 
 var (
@@ -139,20 +137,4 @@ func GenSQL(db *gorm.DB) {
 	// Find SQL.
 	findSQL := model.FindResultSQL(db, res.ID)
 	fmt.Println("findSQL: ", findSQL)
-}
-
-func BelongsToDemo(db *gorm.DB) {
-	programmerMember := model.Member{
-		ID:   uuid.NewString(),
-		Name: "programmer",
-		Company: model.Company{
-			ID:   uuid.NewString(),
-			Name: "tengxun",
-		},
-	}
-	err := model.CreateMember(db, programmerMember)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
 }
