@@ -28,22 +28,19 @@ func main() {
 		Name: "xiaofang",
 		StudentCard: StudentCard{
 			Number: "20202111",
+			Phone:  "10086",
 		},
 	}
 
 	// *************************************
 	// ************ Create *****************
 	// *************************************
-	// if err := CreateStudent(db, studentCase); err != nil {
-	// 	log.Fatalf("create student failed: %v", err)
-	// 	return
-	// }
-
 	studentCaseB := Student{
-		ID:   "05147eb7-4d73-47c2-971b-298f061b4feb",
+		ID:   "testing",
 		Name: "xiaoming",
 		StudentCard: StudentCard{
-			Number: "20202112",
+			Number: "20202001",
+			Phone:  "10001",
 		},
 	}
 	// if err := CreateStudent(db, studentCaseB); err != nil {
@@ -54,7 +51,7 @@ func main() {
 	// *************************************
 	// ************** Find *****************
 	// *************************************
-	studentA, err := FindStudentUsingGormPreload(db, studentCaseB.ID)
+	studentA, err := FindStudentUsingGormPreload(db, studentCase.ID)
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -68,11 +65,23 @@ func main() {
 	}
 	fmt.Printf("find student by id %s: %v\n", studentCase.ID, studentC)
 
+	studentCard, err := FindAssociatedStudentCardsByID(db, studentCase.ID)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	fmt.Println("associated studentCard: ", studentCard)
+
 	// *************************************
 	// ************** Update ***************
 	// *************************************
-	// studentCaseB.Name = "xiao_ming_4"
-	// studentCaseB.StudentCard.Number = "20202003"
+	// studentCase.StudentCard.Phone = "10000"
+	// if err := UpdateStudentCard(db, studentCase.StudentCard); err != nil {
+	// 	log.Fatal(err)
+	// 	return
+	//
+	// studentCaseB.Name = "xiao_ming_2"
+	// studentCaseB.StudentCard.Phone = "10002"
 	// if err := UpdateStudent(db, studentCaseB); err != nil {
 	// 	log.Fatal(err)
 	// 	return
@@ -81,10 +90,14 @@ func main() {
 	// *************************************
 	// ************** Delete ***************
 	// *************************************
-	if err := DeleteStudent(db, studentCaseB); err != nil {
+	if err := DeleteStudentByID(db, studentCaseB.ID, studentCaseB.StudentCard.Number); err != nil {
 		log.Fatal(err)
 		return
 	}
+	// if err := DeleteStudent(db, studentCaseB); err != nil {
+	// 	log.Fatal(err)
+	// 	return
+	// }
 }
 
 type Student struct {
@@ -96,6 +109,7 @@ type Student struct {
 type StudentCard struct {
 	Number    string `gorm:"primaryKey"`
 	StudentID string `gorm:"size:64"`
+	Phone     string
 }
 
 // Create.
@@ -116,16 +130,28 @@ func FindStudentUsingGormPreload(db *gorm.DB, id string) (*Student, error) {
 	return s, err
 }
 
+func FindAssociatedStudentCardsByID(db *gorm.DB, id string) (StudentCard, error) {
+	studentCard := StudentCard{}
+	err := db.Model(&Student{ID: id}).Association("StudentCard").Find(&studentCard)
+	return studentCard, err
+}
+
 // Update.
 func UpdateStudent(db *gorm.DB, s Student) error {
-	return db.Save(&s).Error
+	return db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&s).Error
+}
+
+func UpdateStudentCard(db *gorm.DB, studentCard StudentCard) error {
+	return db.Updates(&studentCard).Error
 }
 
 // Delete.
-func DeleteStudent(db *gorm.DB, s Student) error {
-	return db.Select(clause.Associations).Delete(&s).Error
+func DeleteStudentByID(db *gorm.DB, id, number string) error {
+	return db.Select(clause.Associations).Delete(&Student{ID: id, StudentCard: StudentCard{
+		Number: number,
+	}}, "id = ?", id).Error
 }
 
-func DeleteStudentByID(db *gorm.DB, studentID string) error {
-	return db.Delete(&StudentCard{}, "student_id = ?", studentID).Error
+func DeleteStudent(db *gorm.DB, s Student) error {
+	return db.Select(clause.Associations).Delete(&s).Error
 }
