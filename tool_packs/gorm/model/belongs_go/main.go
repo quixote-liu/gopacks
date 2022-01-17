@@ -44,7 +44,6 @@ func main() {
 	// *************************************
 	// ************** Find *****************
 	// *************************************
-
 	memberA, err := FindMemberUsingGormPreLoad(db, programmerMember.ID)
 	if err != nil {
 		log.Fatal(err)
@@ -128,5 +127,6 @@ func UpdateMember(db *gorm.DB, m Member) error {
 
 // Delete.
 func DeleteMemberByID(db *gorm.DB, m Member) error {
+	// return db.Select(clause.Associations).Delete(&m).Error
 	return db.Delete(&m).Error
 }
