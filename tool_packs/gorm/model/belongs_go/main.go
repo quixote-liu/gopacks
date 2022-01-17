@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 func main() {
@@ -14,6 +15,7 @@ func main() {
 		log.Printf("init database failed: %v", err)
 		return
 	}
+
 	db := database.DB
 
 	// auto migrate models
@@ -25,37 +27,62 @@ func main() {
 	// *************************************
 	// ************ Create *****************
 	// *************************************
-	// programmerMember := model.Member{
-	// 	ID:   uuid.NewString(),
-	// 	Name: "programmer",
-	// 	Company: model.Company{
-	// 		ID:   uuid.NewString(),
-	// 		Name: "tengxun",
-	// 	},
-	// }
-	// err := model.CreateMember(db, programmerMember)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// 	return
-	// }
+	programmerMember := Member{
+		ID:   "3849efc4-b6a9-4a1f-ad2e-88259619084a",
+		Name: "programmer",
+		Company: Company{
+			ID:   "c7e8c7ff-c319-4b57-b28a-31584f1aeb5c",
+			Name: "tengxun",
+		},
+	}
+	err := CreateMember(db, programmerMember)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 
 	// *************************************
 	// ************** Find *****************
 	// *************************************
-	id := "3849efc4-b6a9-4a1f-ad2e-88259619084a"
-	memberA, err := FindMemberUsingGormPreLoad(db, id)
+
+	memberA, err := FindMemberUsingGormPreLoad(db, programmerMember.ID)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 	fmt.Println("find member using preload:", memberA)
 
-	memberB, err := FindMemberByID(db, id)
+	memberB, err := FindMemberByID(db, programmerMember.ID)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-	fmt.Println("memberB: ", memberB)
+	fmt.Println("find member: ", memberB)
+
+	company, err := FindAssociatedCompanyByID(db, programmerMember.Company.ID)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	fmt.Println("Company: ", company)
+
+	// *************************************
+	// ************** Update ***************
+	// *************************************
+	programmerMember.Name = "xiaoming"
+	programmerMember.Company.Name = "tengxun_2"
+	if err := UpdateMember(db, programmerMember); err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	// *************************************
+	// ************** Delete ***************
+	// *************************************
+	if err := DeleteMemberByID(db, programmerMember); err != nil {
+		log.Fatal(err)
+		return
+	}
 }
 
 type Member struct {
@@ -70,10 +97,12 @@ type Company struct {
 	Name string
 }
 
+// Create.
 func CreateMember(db *gorm.DB, m Member) error {
 	return db.Create(&m).Error
 }
 
+// Find.
 func FindMemberByID(db *gorm.DB, id string) (*Member, error) {
 	m := &Member{}
 	err := db.Where("id = ?", id).Find(m).Error
@@ -82,6 +111,22 @@ func FindMemberByID(db *gorm.DB, id string) (*Member, error) {
 
 func FindMemberUsingGormPreLoad(db *gorm.DB, id string) (*Member, error) {
 	m := &Member{}
-	err := db.Preload("Company").Where("id = ?", id).Find(m).Error
+	err := db.Preload(clause.Associations).Where("id = ?", id).Find(m).Error
 	return m, err
+}
+
+func FindAssociatedCompanyByID(db *gorm.DB, companyID string) (*Company, error) {
+	c := &Company{}
+	err := db.Model(&Member{CompanyID: companyID}).Association("Company").Find(c)
+	return c, err
+}
+
+// Update
+func UpdateMember(db *gorm.DB, m Member) error {
+	return db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&m).Error
+}
+
+// Delete.
+func DeleteMemberByID(db *gorm.DB, m Member) error {
+	return db.Delete(&m).Error
 }
