@@ -39,17 +39,10 @@ func main() {
 	// *************************************
 	// *************** Create **************
 	// *************************************
-<<<<<<< HEAD
-	// if err := CreatePerson(db, personCase); err != nil {
-	// 	log.Fatal(err)
-	// 	return
-	// }
-=======
 	if err := CreatePerson(db, personCase); err != nil {
 		log.Fatal(err)
 		return
 	}
->>>>>>> 9d3ceef35b2a8b08b06589e834b5eebb1c7c04c6
 
 	// *************************************
 	// *************** Find ****************
@@ -129,18 +122,3 @@ func FindLanguageByID(db *gorm.DB, id string) (*Language, error) {
 func DeletePerson(db *gorm.DB, id string) error {
 	return db.Select(clause.Associations).Delete(&Person{ID: id}).Error
 }
-<<<<<<< HEAD
-
-// SQL.
-func AutomirageSQL(db *gorm.DB) string {
-	sql := db.ToSQL(func(db *gorm.DB) *gorm.DB {
-		if err := db.AutoMigrate(&Person{}, &Language{}); err != nil {
-			log.Fatal(err)
-			return nil
-		}
-		return db
-	})
-	return sql
-}
-=======
->>>>>>> 9d3ceef35b2a8b08b06589e834b5eebb1c7c04c6
