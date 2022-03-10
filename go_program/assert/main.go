@@ -11,6 +11,18 @@ type ip struct {
 }
 
 func main() {
+	demo2()
+}
+
+func demo2() {
+	var m interface{}
+
+	m = "string"
+
+	fmt.Println(m.(bool))
+}
+
+func demo1() {
 	m := make(map[string]interface{})
 
 	m["ips"] = []ip{

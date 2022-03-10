@@ -33,13 +33,19 @@ func main() {
 	}
 	fmt.Println("worksplce dirtory: ", wd)
 
-	err = os.Mkdir("./hello", os.ModeDir)
-	if err != nil {
-		panic(err)
-	}
+	// err = os.Mkdir("./hello", os.ModeDir)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	err = os.MkdirAll("./hello2/heihei", os.ModeDir)
+	// err = os.MkdirAll("./hello2/heihei", os.ModeDir)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	f, err := os.ReadFile("config")
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("file content:", string(f))
 }
