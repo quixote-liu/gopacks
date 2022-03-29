@@ -1,11 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/gophercloud/gophercloud"
+)
 
 func main() {
-	n := new(map[string]string)
+	client := new(gophercloud.ProviderClient)
 
-	(*n)["service"] = "heihei" // panic
-
-	fmt.Println("service:", (*n)["service"])
+	fmt.Println("client.EndpointLocator == nil", client.EndpointLocator == nil)
 }

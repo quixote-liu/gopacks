@@ -25,25 +25,19 @@ func main() {
 	for i := 0; i < 200; i++ {
 		c := http.Client{}
 
-		go func(c http.Client) {
-			for j := 0; j < 500; j++ {
-				resp, err := c.Do(req)
-				if err != nil {
-					log.Println("error:", err)
-					continue
-				}
-
-				status := resp.StatusCode
-
-				if status != http.StatusOK {
-					continue
-				}
-
-				fmt.Println("status:", status)
-
-				resp.Body.Close()
+		for j := 0; j < 500; j++ {
+			resp, err := c.Do(req)
+			if err != nil {
+				log.Println("error:", err)
+				continue
 			}
-		}(c)
+
+			status := resp.StatusCode
+
+			fmt.Println("status:", status)
+
+			resp.Body.Close()
+		}
 	}
 
 	time.Sleep(time.Hour)

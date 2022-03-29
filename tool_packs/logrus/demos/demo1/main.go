@@ -1,6 +1,10 @@
 package main
 
-import "github.com/sirupsen/logrus"
+import (
+	"fmt"
+
+	"github.com/sirupsen/logrus"
+)
 
 func main() {
 	logger := logrus.New()
@@ -10,6 +14,9 @@ func main() {
 	logger.Info("hello ", "hubei")
 	logger.Warn("hello ", "warn")
 	logger.Error("hello ", "error")
-	logger.Fatal("hello ", "fatal")
-	logger.Panic("hello ", "panic")
+	// logger.Fatal("hello ", "fatal")
+	// logger.Panic("hello ", "panic")
+
+	err := fmt.Errorf("this is error")
+	logger.Error(err)
 }
