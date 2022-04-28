@@ -3,5 +3,11 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("0 % 2=", 0%2)
+	str := "hello, world"
+	for _, v := range str {
+		fmt.Println("string(v):", string(v))
+
+		// vv := []rune{v}
+		// string(vv)
+	}
 }
