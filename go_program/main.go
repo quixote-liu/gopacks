@@ -22,5 +22,6 @@ func main() {
 	host := conf.GetString("system", "host")
 	port := conf.GetString("system", "port")
 	server := net.JoinHostPort(host, port)
-	http.ListenAndServe(server, nil)
+	log.Printf("start server on %s", server)
+	log.Println(http.ListenAndServe(server, nil))
 }
