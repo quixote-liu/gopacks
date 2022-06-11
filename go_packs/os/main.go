@@ -24,22 +24,14 @@ func main() {
 	path := os.Getenv("PATH")
 	fmt.Println("path:", path)
 
-	pid := os.Getpid()
-	fmt.Println("process id:", pid)
+	fmt.Printf("processIDA(): %v\n", processIDA())
+	fmt.Printf("processIDB(): %v\n", processIDB())
+}
 
-	wd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("worksplce dirtory: ", wd)
+func processIDA() int {
+	return os.Getpid()
+}
 
-	err = os.Mkdir("./hello", os.ModeDir)
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.MkdirAll("./hello2/heihei", os.ModeDir)
-	if err != nil {
-		panic(err)
-	}
+func processIDB() int {
+	return os.Getpid()
 }
