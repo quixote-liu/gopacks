@@ -31,4 +31,10 @@ func main() {
 		ct := mime.QEncoding.Encode("UTF-8", "multipart/mixed")
 		fmt.Println("mime.QEncoding.Encode: ", ct)
 	}
+
+	{
+		ct := mime.TypeByExtension("text")
+		fmt.Println("ct:", ct)
+		
+	}
 }

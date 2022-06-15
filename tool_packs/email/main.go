@@ -1,32 +1,34 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"net/smtp"
 	"net/textproto"
+	"os"
 
 	"github.com/jordan-wright/email"
 )
 
 func main() {
-	// SendText()
-	SendHTML()
+	SendText()
+	// SendHTML()
 }
 
 func SendText() {
-	text := `当你想要公开分享一个分支时，需要将其推送到有写入权限的远程仓库上。 
-	本地的分支并不会自动与远程仓库同步——你必须显式地推送想要分享的分支。 这样，
-	你就可以把不愿意分享的内容放到私人分支上，而将需要和别人协作的内容推送到公开分支。
-	如果希望和别人一起在名为 serverfix 的分支上工作，你可以像推送第一个分支那样推送它。
-	运行 git push <remote> <branch>..<h1>Fancy HTML is supported, too!</h1>`
+	// text := `当你想要公开分享一个分支时，需要将其推送到有写入权限的远程仓库上。
+	// 本地的分支并不会自动与远程仓库同步——你必须显式地推送想要分享的分支。 这样，
+	// 你就可以把不愿意分享的内容放到私人分支上，而将需要和别人协作的内容推送到公开分支。
+	// 如果希望和别人一起在名为 serverfix 的分支上工作，你可以像推送第一个分支那样推送它。
+	// 运行 git push <remote> <branch>..<h1>Fancy HTML is supported, too!</h1>`
 
 	e := email.Email{
 		From:    "1136089132@qq.com",
 		To:      []string{"1351169665@qq.com"},
 		Subject: "github remote branch",
-		Text:    []byte(text),
-		// HTML:    []byte("<h1>Fancy HTML is supported, too!</h1>"),
+		Text:    textMix(),
+		// HTML:    textMix(),
 		Headers: textproto.MIMEHeader{},
 	}
 	_, err := e.AttachFile("./shenghuo.txt")
@@ -63,4 +65,17 @@ func SendHTML() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func textMix() []byte {
+	f, err := os.Open("./photo.png")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	buf := bytes.NewBufferString("hello, world")
+	if _, err := buf.ReadFrom(f); err != nil {
+		panic(err)
+	}
+	return buf.Bytes()
 }
